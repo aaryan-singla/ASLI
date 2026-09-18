@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASLI · Verify Before You Trust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+ --navy:#0B1F3A;--navy2:#13304F;--blue:#3C6392;--gold:#D99A21;--goldsoft:#FBF1DC;
+ --red:#B03A22;--redsoft:#F6E7E2;--green:#136F4C;--greensoft:#E2F1EA;
+ --paper:#F3F5F8;--card:#FFFFFF;--line:#D2D9E2;--line2:#E5EAF0;
+ --ink:#0B1F3A;--ink2:#31465E;--mute:#64788F;--ondark:#A9BCD0;--lblue:#EDF1F6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans","Noto Sans Devanagari",system-ui,sans-serif;font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-family:Archivo,"Noto Sans",sans-serif;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+p{margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.74rem}
+.bar{position:sticky;top:0;z-index:60;background:var(--navy);border-bottom:3px solid var(--gold)}
+.bar-in{display:flex;align-items:center;gap:18px;height:58px}
+.wm{font-family:Archivo,sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-.03em;color:#fff}
+.wm i{font-style:normal;color:var(--gold)}
+.bar nav{margin-left:auto;display:flex;gap:3px}
+.bar nav a{text-decoration:none;font-size:.76rem;font-weight:600;color:var(--ondark);padding:7px 13px;background:var(--navy2);border-radius:2px 2px 0 0}
+.bar nav a:hover{background:#1B3E63;color:#fff}
+@media(max-width:1020px){.bar nav{display:none}}
+section{padding:52px 0}
+.dark{background:var(--navy);color:var(--ondark)}
+.sec-h{border-bottom:2px solid var(--ink);padding-bottom:11px}
+.dark .sec-h{border-bottom-color:var(--gold)}
+.sec-h h2{font-size:1.95rem}
+.dark .sec-h h2{color:#fff}
+.sowhat{font-size:1rem;color:var(--mute);padding:13px 0 28px;max-width:95ch}
+.dark .sowhat{color:var(--ondark)}
+.eyebrow{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--gold);border:1px solid var(--gold);padding:3px 9px;margin-bottom:14px}
+.refs{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);font-size:.73rem;color:var(--mute)}
+.dark .refs{border-top-color:#28405C;color:var(--ondark)}
+.hero{background:var(--navy);color:var(--ondark);padding:60px 0 56px}
+.hgrid{display:grid;grid-template-columns:1.04fr .96fr;gap:48px;align-items:start}
+@media(max-width:960px){.hgrid{grid-template-columns:1fr;gap:34px}}
+.hero h1{font-size:clamp(2.3rem,4.8vw,3.5rem);font-weight:800;color:#fff;letter-spacing:-.045em;line-height:1.04}
+.rule{width:92px;height:5px;background:var(--gold);margin:20px 0}
+.lede{font-size:1.05rem;color:#C6D4E2;max-width:50ch}
+.claim{margin-top:24px;background:var(--navy2);border-left:4px solid var(--gold);padding:15px 19px;font-size:.94rem;color:#D6E1EC;max-width:52ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px}
+.chip{font-size:.73rem;padding:5px 11px;border:1px solid #2F4A6B;color:var(--ondark)}
+.box{background:var(--card);border:1px solid var(--line)}
+.box-h{padding:12px 16px;background:var(--navy);color:#fff;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.box-h h3{font-size:.86rem}
+.box-h span{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--ondark)}
+.box-b{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:960px){.grid2,.grid3{grid-template-columns:1fr}}
+/* phone verifier */
+.phone{background:#F7F9FB;border-top:5px solid var(--gold);padding:20px}
+.phone h3{font-size:.95rem;color:var(--ink)}
+.phone .sub{font-size:.78rem;color:var(--mute);margin-top:4px;margin-bottom:15px}
+.codes{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.cbtn{background:var(--card);border:1px solid var(--line);padding:7px 12px;font:inherit;font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink2);cursor:pointer}
+.cbtn.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.cbtn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.langs{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap;align-items:center}
+.langs .l{font-size:.75rem;color:var(--mute);margin-right:3px}
+.lbtn{background:var(--card);border:1px solid var(--line);padding:5px 11px;font:inherit;font-size:.78rem;color:var(--mute);cursor:pointer}
+.lbtn.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600}
+.screen{background:var(--card);border:1px solid var(--line);min-height:250px;display:flex;flex-direction:column}
+.screen-h{background:#075E54;color:#fff;padding:10px 14px;display:flex;gap:10px;align-items:center;font-size:.85rem}
+.screen-h .av{width:26px;height:26px;background:var(--gold);flex:none;border-radius:50%}
+.msgs{padding:14px;display:flex;flex-direction:column;gap:11px;flex:1}
+.msg{max-width:92%;padding:11px 13px;font-size:.88rem;line-height:1.5}
+.msg.out{align-self:flex-end;background:#DCF8C6;color:#1A2E1A}
+.msg.in{align-self:flex-start;background:var(--lblue);color:var(--ink)}
+.msg.in.good{background:var(--greensoft);border-left:4px solid var(--green)}
+.msg.in.bad{background:var(--redsoft);border-left:4px solid var(--red)}
+.msg.in.warn{background:var(--goldsoft);border-left:4px solid var(--gold)}
+.msg .hd{font-family:Archivo,sans-serif;font-weight:700;font-size:.92rem;margin-bottom:5px}
+.msg .fee{margin-top:9px;padding-top:9px;border-top:1px solid rgba(11,31,58,.15);font-weight:600;font-size:.84rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+@media(max-width:880px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--card);padding:20px 18px;border-top:4px solid var(--navy)}
+.stat.alert{border-top-color:var(--red)}
+.stat .n{font-family:Archivo,sans-serif;font-size:2.1rem;font-weight:800;letter-spacing:-.045em;line-height:1}
+.stat .l{font-size:.85rem;font-weight:600;margin-top:7px}
+.stat .s{font-size:.77rem;color:var(--mute);margin-top:6px}
+/* mohar */
+.poster{background:#EFEBE1;border:1px solid #C8C0AE;padding:22px 24px;text-align:center}
+.poster .co{font-family:Archivo,sans-serif;font-weight:800;font-size:1.25rem;color:#33302A}
+.poster .rl{font-size:.95rem;color:#5A5344;margin-top:5px}
+.poster .wg{font-family:"IBM Plex Mono",monospace;font-size:1.05rem;color:#33302A;margin-top:9px}
+.poster .qr{width:92px;height:92px;margin:16px auto 8px;background:
+ repeating-conic-gradient(#33302A 0 25%, #EFEBE1 0 50%) 0 0/14px 14px;border:5px solid #33302A}
+.poster .cd{font-family:"IBM Plex Mono",monospace;font-size:1.15rem;font-weight:500;letter-spacing:2px;color:#33302A}
+.poster .hint{font-size:.74rem;color:#7B7466;margin-top:7px}
+/* flow */
+.flow{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;gap:10px;align-items:center;margin-top:8px}
+@media(max-width:860px){.flow{grid-template-columns:1fr}}
+.fbox{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--navy);padding:15px 16px}
+.fbox h4{font-size:.92rem;margin-bottom:6px}
+.fbox p{font-size:.81rem;color:var(--mute)}
+.far{text-align:center;font-size:1.4rem;color:var(--gold)}
+/* jaal */
+.graphwrap{background:var(--card);border:1px solid var(--line);padding:6px}
+.graphwrap svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.78rem;color:var(--mute)}
+.legend span{display:flex;gap:6px;align-items:center}
+.legend i{width:11px;height:11px;display:block}
+.nodeinfo{background:var(--navy);color:#fff;padding:14px 16px;margin-top:14px;min-height:80px}
+.nodeinfo h4{font-size:.95rem;color:var(--gold);margin-bottom:6px}
+.nodeinfo p{font-size:.85rem;color:var(--ondark)}
+/* footfall */
+.ff{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.ff{grid-template-columns:1fr}}
+.ffc{background:var(--card);border:1px solid var(--line);padding:16px 18px}
+.ffc h4{font-size:.95rem;margin-bottom:6px}
+.ffc p{font-size:.84rem;color:var(--mute)}
+.ffc .tag{display:inline-block;font-size:.69rem;padding:3px 9px;background:var(--greensoft);border:1px solid var(--green);color:var(--green);font-weight:600;margin-top:9px}
+.mods{display:grid;gap:13px}
+.mod{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--navy);padding:19px 22px;display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:start}
+.mod.acc{border-left-color:var(--gold)}
+@media(max-width:820px){.mod{grid-template-columns:1fr;gap:9px}}
+.mod h3{font-size:1.35rem;font-weight:800;letter-spacing:-.03em}
+.mod h3 em{display:block;font-style:normal;font-family:"Noto Sans",sans-serif;font-weight:400;font-size:.75rem;color:var(--mute);margin-top:4px;letter-spacing:0}
+.mod p{font-size:.89rem;color:var(--ink2)}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+@media(max-width:900px){.sgrid{grid-template-columns:1fr}}
+.sg{background:var(--navy2);border-top:4px solid var(--gold);padding:19px}
+.sg h4{font-size:.93rem;color:#fff;margin-bottom:7px}
+.sg p{font-size:.81rem;color:var(--ondark)}
+.kpi{width:100%;border-collapse:collapse;font-size:.85rem;background:var(--card);border:1px solid var(--line)}
+.kpi th{text-align:left;background:var(--navy);color:#fff;font-size:.73rem;font-weight:600;padding:10px 14px}
+.kpi th.r,.kpi td.r{text-align:right;font-family:"IBM Plex Mono",monospace}
+.kpi td{padding:11px 14px;border-bottom:1px solid var(--line2)}
+.kpi tr:last-child td{border-bottom:none}
+.kpi td:first-child{font-weight:600}
+footer{background:var(--navy);color:var(--ondark);padding:38px 0 54px;font-size:.79rem}
+footer b{color:#fff}
+footer .note{margin-top:15px;padding-top:13px;border-top:1px solid #28405C;font-size:.73rem;max-width:105ch}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap bar-in">
+  <span class="wm">AS<i>LI</i></span>
+  <nav>
+    <a href="#why">The reframe</a><a href="#mohar">Mohar</a><a href="#poochh">Try it</a>
+    <a href="#jaal">Jaal</a><a href="#footfall">Outreach</a><a href="#arch">Modules</a>
+  </nav>
+</div></div>
+
+<div class="hero"><div class="wrap hgrid">
+  <div>
+    <span class="eyebrow">DIGITAL SHRAM SANKALP / PROBLEM STATEMENT 04</span>
+    <h1>Outreach and fraud<br>are the same problem.</h1>
+    <div class="rule"></div>
+    <p class="lede">Fraudulent job portals do not succeed because they are sophisticated. They succeed because a worker holding a job advertisement has no cheap way to answer one question: is this real?</p>
+    <div class="claim">Outreach that raises interest without supplying an answer creates demand that fraudsters harvest. Awareness without a verification primitive is a subsidy to the fraud economy.</div>
+    <div class="chips"><span class="chip">NCS</span><span class="chip">Bhashini</span><span class="chip">WhatsApp / SMS / IVR</span><span class="chip">cybercrime.gov.in</span><span class="chip">Helpline 1930</span><span class="chip">No login required</span></div>
+  </div>
+  <div class="phone">
+    <h3>Ask the question. In any language. From anywhere.</h3>
+    <p class="sub">Pick a code a worker might have seen on a poster, a forward or a consultancy wall</p>
+    <div class="codes" id="codes"></div>
+    <div class="langs"><span class="l">Reply language</span>
+      <button class="lbtn on" data-l="en" type="button">English</button>
+      <button class="lbtn" data-l="hi" type="button">हिन्दी</button>
+      <button class="lbtn" data-l="bn" type="button">বাংলা</button>
+    </div>
+    <div class="screen">
+      <div class="screen-h"><span class="av"></span><div><div style="font-weight:600">ASLI · NCS Verification</div><div style="font-size:.7rem;opacity:.8">Government of India</div></div></div>
+      <div class="msgs" id="msgs"></div>
+    </div>
+  </div>
+</div></div>
+
+<section id="why"><div class="wrap">
+  <div class="sec-h"><h2>Why takedown will always lose</h2></div>
+  <p class="sowhat">Enforcement against fraudulent employment platforms is necessarily retrospective. A fake state staff selection website ran on a third-party domain, collected registration fees through QR codes, and was removed from search results only after the operator was arrested. Every victim had already paid before the takedown began.</p>
+  <div class="stats">
+    <div class="stat alert"><div class="n">Always</div><div class="l">after the payment</div><div class="s">Detection, reporting, investigation and takedown all follow the loss. The money has usually already moved.</div></div>
+    <div class="stat"><div class="n">Minutes</div><div class="l">to stand up a clone</div><div class="s">A third-party domain, a copied layout and a QR code. The cost of creating the next fake site is near zero.</div></div>
+    <div class="stat alert"><div class="n">1</div><div class="l">signal common to almost all of it</div><div class="s">A demand for money. Government employment services never charge a fee, so a fee request is definitionally fraud.</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">programmes, one problem</div><div class="s">Awareness and fraud prevention are budgeted and run separately. They are the same intervention.</div></div>
+  </div>
+  <div class="grid2" style="margin-top:26px">
+    <div class="box" style="border-left:5px solid var(--red)">
+      <div class="box-h" style="background:var(--redsoft);color:var(--red)"><h3>What everyone else will propose</h3><span style="color:var(--red)">and why it plateaus</span></div>
+      <div class="box-b">
+        <p style="font-size:.87rem;color:var(--ink2);line-height:1.5;margin-bottom:11px">A classifier that crawls the web for phishing domains impersonating government portals, plus a public awareness campaign with posters and social media.</p>
+        <p style="font-size:.87rem;color:var(--ink2);line-height:1.5;margin-bottom:11px">Both are worth doing. Neither scales. Detection capacity is fixed and the supply of new domains is not. Campaign reach is bought and decays the moment the budget stops.</p>
+        <p style="font-size:.95rem;font-weight:600;color:var(--ink);line-height:1.45">And crucially, a campaign that tells a worker to be careful without telling them how to check just makes them anxious, not safe.</p>
+      </div>
+    </div>
+    <div class="box" style="border-left:5px solid var(--green)">
+      <div class="box-h" style="background:var(--greensoft);color:var(--green)"><h3>What ASLI proposes instead</h3><span style="color:var(--green)">one primitive, deployed once</span></div>
+      <div class="box-b">
+        <p style="font-size:.87rem;color:var(--ink2);line-height:1.5;margin-bottom:11px">Make authenticity checkable at the point of contact. Every genuine NCS vacancy carries a short signed code. Any worker, anywhere, through any channel, can ask whether the advertisement in front of them corresponds to a real vacancy.</p>
+        <p style="font-size:.87rem;color:var(--ink2);line-height:1.5;margin-bottom:11px">Takedown scales with enforcement capacity, which is fixed. Verification scales with the number of people who ask, which is not.</p>
+        <p style="font-size:.95rem;font-weight:600;color:var(--ink);line-height:1.45">Outreach then has something to distribute: not a slogan, but a habit.</p>
+      </div>
+    </div>
+  </div>
+  <p class="refs">Case reference: publicly reported enforcement action against a fraudulent state staff selection commission website hosted on a third-party domain, collecting registration fees via QR code, taken down after arrests.</p>
+</div></section>
+
+<section id="mohar" style="background:#E9EDF2"><div class="wrap">
+  <div class="sec-h"><h2>Mohar: the vacancy carries its own proof</h2></div>
+  <p class="sowhat">When an employer posts a genuine vacancy on NCS, the system issues a short signed verification code and a QR alongside it. The code is designed to survive the journey an advertisement actually takes: photographed, forwarded on WhatsApp, printed on a poster, read aloud over a phone.</p>
+  <div class="grid2">
+    <div>
+      <div class="poster">
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:#7B7466;letter-spacing:1px">VACANCY NOTICE</p>
+        <div class="co">Kaveri Precision Components</div>
+        <div class="rl">Machine Operator · 12 positions · Hosur</div>
+        <div class="wg">Rs 16,500 per month</div>
+        <div class="qr"></div>
+        <div class="cd">NCS-7K4M-92</div>
+        <p class="hint">Scan or send this code to 14434 to check if this job is real</p>
+      </div>
+      <p style="font-size:.83rem;color:var(--mute);margin-top:13px">The code is short enough to be read over a phone call, spoken to an IVR line, or typed by someone with limited literacy. That constraint drives the design: eight characters, no ambiguous glyphs, checksum built in.</p>
+    </div>
+    <div>
+      <div class="box"><div class="box-h"><h3>Why a signed code and not a link</h3></div>
+        <div class="box-b">
+          <div style="border-bottom:1px solid var(--line2);padding-bottom:13px;margin-bottom:13px">
+            <h4 style="font-size:.95rem;margin-bottom:6px">A link can be cloned. A code cannot be guessed.</h4>
+            <p style="font-size:.86rem;color:var(--ink2)">Fraudulent sites already copy government layouts and domain patterns convincingly. A cryptographically signed code resolves only against the authoritative register, so a copied poster with a fabricated code returns "no such vacancy" rather than a convincing forgery.</p>
+          </div>
+          <div style="border-bottom:1px solid var(--line2);padding-bottom:13px;margin-bottom:13px">
+            <h4 style="font-size:.95rem;margin-bottom:6px">It works where the worker actually is</h4>
+            <p style="font-size:.86rem;color:var(--ink2)">The overwhelming majority of job leads reach informal workers through a forward, a wall, or a person, not through a portal. The code travels with the advertisement into all of those channels without needing an app.</p>
+          </div>
+          <div>
+            <h4 style="font-size:.95rem;margin-bottom:6px">Absence of a code is itself informative</h4>
+            <p style="font-size:.86rem;color:var(--ink2)">Once codes are ubiquitous, an advertisement without one becomes conspicuous. The verification habit does the work that a takedown pipeline cannot.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="poochh" class="dark"><div class="wrap">
+  <div class="sec-h"><h2>Poochh: one question, four channels, twenty-two languages</h2></div>
+  <p class="sowhat">The verification above runs on WhatsApp, plain SMS, a missed call that triggers an IVR callback, and a QR scan. Every reply carries the same closing sentence, because a fee demand is the single most reliable fraud signal available and it costs nothing to repeat.</p>
+  <div class="flow">
+    <div class="fbox" style="border-top-color:var(--gold)"><h4>Worker sees an advertisement</h4><p>A WhatsApp forward, a poster at a labour chowk, a consultancy office wall, a Telegram group, a newspaper insert.</p></div>
+    <div class="far">&#8594;</div>
+    <div class="fbox" style="border-top-color:var(--gold)"><h4>Sends the code, or the evidence</h4><p>The code where one exists. Where none does, the website address, the phone number or the UPI handle being used to collect money.</p></div>
+    <div class="far">&#8594;</div>
+    <div class="fbox" style="border-top-color:var(--green)"><h4>Gets an answer, not a lecture</h4><p>Whether the vacancy exists, who posted it, the role, the wage, and the fee rule. In their own language, in seconds, with no login.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:26px">
+    <div style="background:var(--navy2);border-left:4px solid var(--gold);padding:18px 20px">
+      <h4 style="font-size:1rem;color:#fff;margin-bottom:8px">Where no code exists, give a risk assessment, not a verdict</h4>
+      <p style="font-size:.86rem;color:var(--ondark);line-height:1.5">Most advertisements a worker encounters will not carry a code, at least at first. Sending a URL, phone number or UPI handle returns a graded answer: whether that identifier has been reported before, whether the domain was registered last week, whether the UPI handle is linked to other reports. An honest "we cannot confirm this, and here is what is unusual about it" is more useful than silence, and far more useful than a false reassurance.</p>
+    </div>
+    <div style="background:var(--navy2);border-left:4px solid var(--red);padding:18px 20px">
+      <h4 style="font-size:1rem;color:#fff;margin-bottom:8px">The sentence that does most of the work</h4>
+      <p style="font-size:1.05rem;color:#fff;line-height:1.5;font-weight:600;margin-bottom:10px">Government employment services never charge a fee. Any demand for money is fraud.</p>
+      <p style="font-size:.86rem;color:var(--ondark);line-height:1.5">It appears in every reply, in every language, whether the answer is yes or no. A worker who internalises only this one rule is protected against the large majority of employment fraud, including every variant the system has never seen before. This is the cheapest line of defence available and it requires no detection capability whatsoever.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="jaal"><div class="wrap">
+  <div class="sec-h"><h2>Jaal: a report is a node, not a ticket</h2></div>
+  <p class="sowhat">Every report carries identifiers: a domain, a phone number, a UPI handle, a bank account. Handled as individual complaints, they resolve one case each. Clustered, they resolve operators. Click a node to see what it links.</p>
+  <div class="grid2">
+    <div>
+      <div class="graphwrap">
+        <svg viewBox="0 0 560 400" aria-label="Network graph showing fraud reports clustering into two operator groups through shared payment and contact identifiers" id="graph">
+          <g id="edges" stroke="#C2CEDB" stroke-width="1.6"></g>
+          <g id="nodes"></g>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i style="background:#B03A22"></i>UPI handle</span>
+        <span><i style="background:#D99A21"></i>Phone number</span>
+        <span><i style="background:#3C6392"></i>Domain</span>
+        <span><i style="background:#64788F"></i>Worker report</span>
+      </div>
+      <div class="nodeinfo" id="nodeinfo"><h4>Click any node</h4><p>Reports arrive separately from different districts. The identifiers inside them are what connect one incident to the next.</p></div>
+    </div>
+    <div>
+      <div class="box"><div class="box-h"><h3>What clustering changes</h3></div>
+        <div class="box-b">
+          <div style="border-bottom:1px solid var(--line2);padding-bottom:13px;margin-bottom:13px">
+            <h4 style="font-size:.95rem;margin-bottom:6px">One report protects the next thousand</h4>
+            <p style="font-size:.86rem;color:var(--ink2)">A single report identifying a UPI handle immediately marks every other advertisement using that handle, including ones nobody has reported yet. The marginal value of a report rises with the size of the graph rather than falling.</p>
+          </div>
+          <div style="border-bottom:1px solid var(--line2);padding-bottom:13px;margin-bottom:13px">
+            <h4 style="font-size:.95rem;margin-bottom:6px">Enforcement receives a network, not a pile</h4>
+            <p style="font-size:.86rem;color:var(--ink2)">The cluster, with its shared payment rails and contact numbers, is handed to the national cybercrime reporting portal and the 1930 financial fraud helpline. A payment rail can be frozen far faster than a domain can be taken down.</p>
+          </div>
+          <div>
+            <h4 style="font-size:.95rem;margin-bottom:6px">The fee demand is the join key</h4>
+            <p style="font-size:.86rem;color:var(--ink2)">Fraudulent operations must eventually collect money, and collection leaves an identifier. That is the structural weakness in the whole fraud economy, and it is where a verification system should aim.</p>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--goldsoft);border:1px solid #E2CE9E;padding:15px 17px;margin-top:18px">
+        <p style="font-size:.86rem;color:var(--ink2)"><b>Reports are pseudonymous by default.</b> A worker does not have to identify themselves to warn others. Requiring identification to report fraud suppresses exactly the reports the system most needs, particularly from workers who are embarrassed at having nearly paid.</p>
+      </div>
+    </div>
+  </div>
+  <p class="refs">Graph is synthetic and constructed to demonstrate clustering behaviour. A production build shares clusters with the National Cyber Crime Reporting Portal and the 1930 helpline under agreed protocols.</p>
+</div></section>
+
+<section id="footfall" style="background:#E9EDF2"><div class="wrap">
+  <div class="sec-h"><h2>Outreach where the queue already is</h2></div>
+  <p class="sowhat">Workers do not visit employment portals. They visit places where they already have a reason to stand in line. Outreach should be distribution of the verification habit through that existing footfall, not the purchase of attention through campaigns.</p>
+  <div class="ff">
+    <div class="ffc"><h4>Fair price shops</h4><p>Nearly every unorganised worker household collects rations. A printed verification card at the counter reaches more workers per rupee than any digital channel, and the shopkeeper already explains things to people.</p><span class="tag">existing footfall</span></div>
+    <div class="ffc"><h4>Common Service Centres</h4><p>Already the assisted channel for eShram registration and correction. The operator can demonstrate a verification once, and the worker keeps the habit.</p><span class="tag">existing footfall</span></div>
+    <div class="ffc"><h4>Bank business correspondents</h4><p>The BC point is where the money actually moves. A verification prompt at the moment of a cash transfer is the closest intervention to the point of loss.</p><span class="tag">existing footfall</span></div>
+    <div class="ffc"><h4>Model Career Centres</h4><p>407 approved centres, including 370 upgraded Employment Exchanges, already exist for exactly this audience and already run job fairs.</p><span class="tag">existing network</span></div>
+    <div class="ffc"><h4>Panchayat offices and labour chowks</h4><p>The labour chowk is where informal hiring physically happens. A painted code on the wall is permanent infrastructure at the cost of paint.</p><span class="tag">existing footfall</span></div>
+    <div class="ffc"><h4>The forward itself</h4><p>Every verification reply ends with a line the worker can forward to whoever sent them the advertisement. The channel that carries the fraud also carries the correction.</p><span class="tag">zero marginal cost</span></div>
+  </div>
+  <div style="background:var(--navy);color:#fff;padding:17px 19px;margin-top:22px">
+    <p style="font-size:.95rem;line-height:1.5">This is the part that makes outreach and fraud prevention one budget line rather than two. Every rupee spent distributing the verification habit reduces fraud losses and increases genuine portal usage at the same time, because the worker who checks a fake advertisement learns where the real ones are.</p>
+  </div>
+</div></section>
+
+<section id="arch"><div class="wrap">
+  <div class="sec-h"><h2>Three modules</h2></div>
+  <p class="sowhat">One verification primitive, delivered through channels that already exist, feeding an intelligence graph that already has a home in national enforcement infrastructure.</p>
+  <div class="mods">
+    <div class="mod acc"><h3>Mohar<em>the signed vacancy</em></h3><div><p>Every genuine NCS vacancy is issued a short signed verification code and QR at the moment of posting. Eight characters, no ambiguous glyphs, checksum built in, designed to be read aloud over a phone or typed by someone with limited literacy. The code resolves only against the authoritative register.</p></div></div>
+    <div class="mod"><h3>Poochh<em>ask from anywhere</em></h3><div><p>WhatsApp, SMS, missed-call IVR and QR scan, in 22 languages through Bhashini. No login, no personal data, no app. Where no code exists, a URL, phone number or UPI handle returns a graded risk assessment rather than a verdict. Every reply carries the fee rule.</p></div></div>
+    <div class="mod"><h3>Jaal<em>the fraud network</em></h3><div><p>Reports are clustered on shared identifiers into operators rather than incidents. Clusters are shared with the National Cyber Crime Reporting Portal and the 1930 helpline, where a payment rail can be frozen faster than a domain can be removed.</p></div></div>
+  </div>
+</div></section>
+
+<section class="dark"><div class="wrap">
+  <div class="sec-h"><h2>Safeguards and measurement</h2></div>
+  <p class="sowhat">A verification service used by vulnerable people at a moment of financial anxiety has to be designed so that using it costs the worker nothing, including in privacy.</p>
+  <div class="sgrid">
+    <div class="sg"><h4>No login, no personal data</h4><p>A code in, an answer out. Nobody should have to identify themselves to find out whether a job advertisement is real.</p></div>
+    <div class="sg"><h4>Pseudonymous reporting</h4><p>Reports carry the fraudster's identifiers, not the reporter's. Requiring identification suppresses exactly the reports the graph needs most.</p></div>
+    <div class="sg"><h4>Never a false all-clear</h4><p>Where a vacancy cannot be confirmed, the reply says so plainly. The system never manufactures reassurance it cannot support.</p></div>
+    <div class="sg"><h4>Employers are not exposed</h4><p>A verification reply confirms the vacancy, the role and the wage as posted. It does not disclose applicant data or anything the employer did not publish.</p></div>
+    <div class="sg"><h4>Graded, not binary, on unknowns</h4><p>An unrecognised domain is reported as unrecognised, with what is unusual about it, rather than labelled fraudulent without evidence.</p></div>
+    <div class="sg"><h4>Reports published in aggregate</h4><p>Fee-demand incidents are reported monthly. Fraud volume that is not published cannot be managed by anyone outside the system.</p></div>
+  </div>
+  <div style="margin-top:28px">
+    <table class="kpi">
+      <thead><tr><th>What we would be judged on</th><th>Why this measure</th><th class="r">Reported</th></tr></thead>
+      <tbody>
+        <tr><td>Verification queries per lakh active jobseekers</td><td>The only real measure of whether the habit has spread. Campaign reach measures spending; queries measure behaviour.</td><td class="r">monthly</td></tr>
+        <tr><td>Share of NCS vacancies carrying a live code</td><td>Coverage on the supply side. Without it, an absent code means nothing.</td><td class="r">monthly</td></tr>
+        <tr><td>Median hours from first report to cluster identification</td><td>Measures whether the graph is actually converting incidents into operators fast enough to matter.</td><td class="r">monthly</td></tr>
+        <tr><td>Reported fee-demand incidents</td><td>Published. The clearest available proxy for fraud pressure on jobseekers.</td><td class="r">published</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <p><b>ASLI</b> / Verify Before You Trust, for Employment Services / Problem Statement 04, Digital Shram Sankalp / Ministry of Labour and Employment with MyGov</p>
+  <p class="note">Working prototype. Vacancies, verification codes, reports and the fraud graph shown here are synthetic and constructed to demonstrate the system's behaviour across genuine, fraudulent and unverifiable cases. The helpline number shown is the eShram helpline used illustratively; a production build would use a dedicated short code. References to the National Cyber Crime Reporting Portal and the 1930 financial fraud helpline describe existing national infrastructure with which clusters would be shared under agreed protocols.</p>
+</div></footer>
+
+<script>
+(function(){
+"use strict";
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e;}
+
+/* ---- verification demo ---- */
+var CASES=[
+ {code:'NCS-7K4M-92',kind:'good',label:'From a poster',
+  en:{h:'This vacancy is genuine.',b:'Employer: Kaveri Precision Components, Hosur.<br>Role: Machine Operator, 12 positions.<br>Wage: Rs 16,500 per month.<br>Posted: 12 September 2026. Applications close 30 September.<br>Employer verified through EPFO contribution history.'},
+  hi:{h:'यह भर्ती असली है।',b:'नियोक्ता: कावेरी प्रिसिजन कंपोनेंट्स, होसुर।<br>पद: मशीन ऑपरेटर, 12 रिक्तियाँ।<br>वेतन: 16,500 रुपये प्रति माह।<br>पोस्ट किया गया: 12 सितंबर 2026। आवेदन 30 सितंबर तक।<br>नियोक्ता ईपीएफओ रिकॉर्ड से सत्यापित।'},
+  bn:{h:'এই চাকরিটি আসল।',b:'নিয়োগকর্তা: কাবেরি প্রিসিশন কম্পোনেন্টস, হোসুর।<br>পদ: মেশিন অপারেটর, ১২টি শূন্যপদ।<br>বেতন: মাসে ১৬,৫০০ টাকা।<br>পোস্ট: ১২ সেপ্টেম্বর ২০২৬। আবেদন ৩০ সেপ্টেম্বর পর্যন্ত।<br>নিয়োগকর্তা ইপিএফও রেকর্ড থেকে যাচাই করা।'}},
+ {code:'NCS-3B8X-14',kind:'bad',label:'From a WhatsApp forward',
+  en:{h:'No such vacancy exists.',b:'This code does not match any vacancy on the National Career Service. It was not issued by NCS.<br><br>This advertisement has been reported 47 times from 9 districts in the last 14 days. The UPI handle it uses is linked to 3 other reported advertisements.'},
+  hi:{h:'ऐसी कोई भर्ती मौजूद नहीं है।',b:'यह कोड राष्ट्रीय करियर सेवा की किसी भी रिक्ति से मेल नहीं खाता। यह एनसीएस द्वारा जारी नहीं किया गया।<br><br>पिछले 14 दिनों में 9 ज़िलों से इस विज्ञापन की 47 बार शिकायत आई है। इसका यूपीआई हैंडल 3 अन्य शिकायत किए गए विज्ञापनों से जुड़ा है।'},
+  bn:{h:'এমন কোনো শূন্যপদ নেই।',b:'এই কোডটি ন্যাশনাল ক্যারিয়ার সার্ভিসের কোনো শূন্যপদের সঙ্গে মেলে না। এটি এনসিএস জারি করেনি।<br><br>গত ১৪ দিনে ৯টি জেলা থেকে এই বিজ্ঞাপনের বিরুদ্ধে ৪৭টি অভিযোগ এসেছে।'}},
+ {code:'hiring-fast.in',kind:'warn',label:'A website address, no code',
+  en:{h:'We cannot confirm this.',b:'This is not a National Career Service address. We hold no record of it.<br><br>What is unusual: the domain was registered 11 days ago, it has no registered employer behind it, and it asks for a payment before an interview.<br><br>Treat this as unverified. Do not pay.'},
+  hi:{h:'हम इसकी पुष्टि नहीं कर सकते।',b:'यह राष्ट्रीय करियर सेवा का पता नहीं है। हमारे पास इसका कोई रिकॉर्ड नहीं है।<br><br>असामान्य बात: यह डोमेन 11 दिन पहले रजिस्टर हुआ, इसके पीछे कोई पंजीकृत नियोक्ता नहीं है, और यह साक्षात्कार से पहले भुगतान माँगता है।<br><br>इसे असत्यापित मानें। भुगतान न करें।'},
+  bn:{h:'আমরা এটি নিশ্চিত করতে পারছি না।',b:'এটি ন্যাশনাল ক্যারিয়ার সার্ভিসের ঠিকানা নয়। আমাদের কাছে এর কোনো রেকর্ড নেই।<br><br>যা অস্বাভাবিক: ডোমেনটি ১১ দিন আগে নিবন্ধিত, এর পিছনে কোনো নিবন্ধিত নিয়োগকর্তা নেই, এবং সাক্ষাৎকারের আগে টাকা চাওয়া হচ্ছে।<br><br>টাকা দেবেন না।'}}
+];
+var FEE={
+ en:'Government employment services never charge a fee. Any demand for money is fraud.',
+ hi:'सरकारी रोज़गार सेवाएँ कभी शुल्क नहीं लेतीं। पैसे की कोई भी माँग धोखाधड़ी है।',
+ bn:'সরকারি কর্মসংস্থান পরিষেবা কখনো ফি নেয় না। টাকার যেকোনো দাবি প্রতারণা।'
+};
+var sel=0,lang='en';
+function renderCodes(){
+  var c=document.getElementById('codes');c.innerHTML='';
+  CASES.forEach(function(x,i){
+    var b=el('button','cbtn'+(i===sel?' on':''),x.code);
+    b.type='button';b.title=x.label;
+    b.addEventListener('click',function(){sel=i;draw();});
+    c.appendChild(b);
+  });
+}
+function draw(){
+  renderCodes();
+  Array.prototype.forEach.call(document.querySelectorAll('.lbtn'),function(b){
+    b.classList.toggle('on',b.dataset.l===lang);
+  });
+  var x=CASES[sel],t=x[lang];
+  var m=document.getElementById('msgs');m.innerHTML='';
+  m.appendChild(el('div','msg out',x.code));
+  var cls=x.kind==='good'?'good':x.kind==='bad'?'bad':'warn';
+  m.appendChild(el('div','msg in '+cls,
+    '<div class="hd">'+t.h+'</div>'+t.b+'<div class="fee">'+FEE[lang]+'</div>'));
+}
+Array.prototype.forEach.call(document.querySelectorAll('.lbtn'),function(b){
+  b.addEventListener('click',function(){lang=b.dataset.l;draw();});
+});
+draw();
+
+/* ---- fraud graph ---- */
+var N=[
+ {id:'u1',t:'upi',x:170,y:120,r:16,lbl:'UPI',
+  info:['UPI handle: <span class="mono">payfast@ybl</span>','Appears in 3 distinct fraudulent advertisements and 47 worker reports across 9 districts. This single identifier is what links two apparently unrelated campaigns into one operator.']},
+ {id:'u2',t:'upi',x:400,y:280,r:13,lbl:'UPI',
+  info:['UPI handle: <span class="mono">careerhelp@okaxis</span>','Appears in 1 advertisement and 8 reports, all from a single district. Smaller cluster, likely a separate operator or an early-stage campaign.']},
+ {id:'p1',t:'phone',x:90,y:230,r:11,lbl:'Ph',
+  info:['Phone number reported 22 times','Used as the WhatsApp contact on two different fake advertisements, including one impersonating a state selection commission.']},
+ {id:'p2',t:'phone',x:290,y:60,r:10,lbl:'Ph',
+  info:['Phone number reported 14 times','Shares a handset identifier pattern with the first number and collects to the same UPI handle.']},
+ {id:'p3',t:'phone',x:480,y:190,r:9,lbl:'Ph',
+  info:['Phone number reported 6 times','Only connection to the main cluster is through a shared domain registrar, which is weak evidence on its own.']},
+ {id:'d1',t:'dom',x:250,y:190,r:13,lbl:'Dom',
+  info:['Domain: <span class="mono">hiring-fast.in</span>','Registered 11 days ago. Copies the layout of a government employment portal. Collects a registration fee by QR code before any interview.']},
+ {id:'d2',t:'dom',x:430,y:110,r:11,lbl:'Dom',
+  info:['Domain: <span class="mono">sarkari-bharti-2026.in</span>','Registered 6 days ago on the same registrar and the same day as two other reported domains. Bulk registration is itself a signal.']},
+ {id:'r1',t:'rep',x:40,y:110,r:7,lbl:''},{id:'r2',t:'rep',x:60,y:320,r:7,lbl:''},
+ {id:'r3',t:'rep',x:190,y:330,r:7,lbl:''},{id:'r4',t:'rep',x:330,y:350,r:7,lbl:''},
+ {id:'r5',t:'rep',x:360,y:30,r:7,lbl:''},{id:'r6',t:'rep',x:520,y:300,r:7,lbl:''},
+ {id:'r7',t:'rep',x:520,y:60,r:7,lbl:''},{id:'r8',t:'rep',x:120,y:30,r:7,lbl:''}
+];
+var E=[['r1','p1'],['r8','p2'],['p1','u1'],['p2','u1'],['d1','u1'],['r2','p1'],['r3','d1'],
+       ['d2','p2'],['r5','d2'],['r7','d2'],['d1','p1'],['r4','u2'],['r6','u2'],['p3','u2'],['d2','p3']];
+var COL={upi:'#B03A22',phone:'#D99A21',dom:'#3C6392',rep:'#64788F'};
+(function(){
+  var eg=document.getElementById('edges'),ng=document.getElementById('nodes');
+  function at(id){return N.filter(function(n){return n.id===id;})[0];}
+  E.forEach(function(e){
+    var a=at(e[0]),b=at(e[1]);
+    var l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);
+    l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);
+    eg.appendChild(l);
+  });
+  N.forEach(function(n){
+    var g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor=n.info?'pointer':'default';
+    var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',n.r);
+    c.setAttribute('fill',COL[n.t]);
+    g.appendChild(c);
+    if(n.lbl){
+      var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',n.x);t.setAttribute('y',n.y+4);
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-family','IBM Plex Mono, monospace');
+      t.setAttribute('font-size','9');t.setAttribute('fill','#fff');
+      t.textContent=n.lbl;
+      g.appendChild(t);
+    }
+    if(n.info){
+      g.addEventListener('click',function(){
+        document.getElementById('nodeinfo').innerHTML='<h4>'+n.info[0]+'</h4><p>'+n.info[1]+'</p>';
+      });
+    }
+    ng.appendChild(g);
+  });
+})();
+})();
+</script>
+</body>
+</html>
